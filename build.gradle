@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.10'
+}
+
+group 'stnik.pi'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    compile "org.bidib.com.pi4j:pi4j-core:1.2.M1"
+    runtime "org.bidib.com.pi4j:pi4j-core:1.2.M1"
+    //compile "org.bidib.com.pi4j:pi4j-core:1.2.M1"
+    //compile 'com.pi4j:pi4j-parent:1.2-SNAPSHOT'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+jar {
+    manifest {
+
+        attributes(
+                'Class-Path': configurations.runtime.files.collect { "lib/$it.name" }.join(' '),
+                'Main-Class': 'stnik.pi.gpio01.MainKt'
+        )
+    }
+    //from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    from configurations.runtime.collect { zipTree(it) }
+}
