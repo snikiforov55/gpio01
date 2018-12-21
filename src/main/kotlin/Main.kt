@@ -2,10 +2,13 @@ package stnik.pi.gpio01
 
 
 import com.pi4j.io.gpio.GpioFactory
+import com.pi4j.io.gpio.GpioPinDigitalInput
 import com.pi4j.io.gpio.RaspiPin
 import com.pi4j.util.ConsoleColor
 import com.pi4j.io.gpio.PinPullResistance
 import com.pi4j.util.CommandArgumentParser
+import java.util.concurrent.TimeUnit
+import kotlin.concurrent.thread
 
 
 fun main(args: Array<String>){
@@ -17,7 +20,7 @@ fun main(args: Array<String>){
     // has been provided, then lookup the pin by address
     val pin = CommandArgumentParser.getPin(
         RaspiPin::class.java, // pin provider class to obtain pin instance from
-        RaspiPin.GPIO_01, // default pin if no pin argument found
+        RaspiPin.GPIO_02, // default pin if no pin argument found
         args.toString())             // argument array to search in
 
     // by default we will use gpio pin PULL-UP; however, if an argument
@@ -49,6 +52,23 @@ fun main(args: Array<String>){
         )
     )
     println()
+
+
+    val myButton = gpio.provisionDigitalInputPin(RaspiPin.GPIO_07, PinPullResistance.PULL_DOWN)
+    // set shutdown state for this input pin
+    myButton.setShutdownOptions(true)
+
+    while (true) {
+        println(
+            " [" + myButton.toString() + "] digital state is: " + ConsoleColor.conditional(
+                myButton.isHigh, // conditional expression
+                ConsoleColor.GREEN, // positive conditional color
+                ConsoleColor.RED, // negative conditional color
+                myButton.state
+            )
+        )
+        TimeUnit.MILLISECONDS.sleep(500L)
+    }
 
     // stop all GPIO activity/threads by shutting down the GPIO controller
     // (this method will forcefully shutdown all GPIO monitoring threads and scheduled tasks)
