@@ -2,17 +2,23 @@ package stnik.pi.gpio01
 
 
 import com.pi4j.io.gpio.GpioFactory
-import com.pi4j.io.gpio.GpioPinDigitalInput
 import com.pi4j.io.gpio.RaspiPin
 import com.pi4j.util.ConsoleColor
 import com.pi4j.io.gpio.PinPullResistance
 import com.pi4j.util.CommandArgumentParser
+import io.javalin.Context
 import java.util.concurrent.TimeUnit
-import kotlin.concurrent.thread
+import io.javalin.Javalin
+import io.javalin.staticfiles.Location
 
 
 fun main(args: Array<String>){
     println("Hello Gpio!")
+
+    val app = Javalin.create()
+    //app.get("/") { ctx : Context -> ctx.result("Hello World") }
+    app.enableStaticFiles("gpio01web", Location.EXTERNAL)
+    app.start(7000)
 
     val gpio = GpioFactory.getInstance()
 
@@ -58,6 +64,10 @@ fun main(args: Array<String>){
     // set shutdown state for this input pin
     myButton.setShutdownOptions(true)
 
+    app.get("/gpio") { ctx : Context -> ctx.result("{\"id\" : \"none\",  \"name\" : " +
+            "\"GPIO7\"" +
+            ", \"pin\": \"" + myButton.state + "\" " + "}") }
+
     while (true) {
         println(
             " [" + myButton.toString() + "] digital state is: " + ConsoleColor.conditional(
@@ -73,5 +83,17 @@ fun main(args: Array<String>){
     // stop all GPIO activity/threads by shutting down the GPIO controller
     // (this method will forcefully shutdown all GPIO monitoring threads and scheduled tasks)
     gpio.shutdown()
+
+    /*
+    app.get("/gpio") { ctx : Context -> ctx.result("{\"id\" : \"none\",  \"name\" : " +
+            "\"GPIO7\"" +
+            ", \"pin\": \"" + "OFF" + "\" " + "}") }
+
+    println("Running")
+    while (true) {
+        print(".")
+        TimeUnit.MILLISECONDS.sleep(1000L)
+    }
+    */
 
 }

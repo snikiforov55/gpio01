@@ -16,7 +16,8 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     compile "org.bidib.com.pi4j:pi4j-core:1.2.M1"
     runtime "org.bidib.com.pi4j:pi4j-core:1.2.M1"
-    //compile "org.bidib.com.pi4j:pi4j-core:1.2.M1"
+    compile "io.javalin:javalin:2.4.0"
+    compile "org.slf4j:slf4j-simple:1.7.25"
     //compile 'com.pi4j:pi4j-parent:1.2-SNAPSHOT'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
